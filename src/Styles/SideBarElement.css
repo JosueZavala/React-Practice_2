@@ -1,0 +1,50 @@
+.nav>li {
+    padding: 10px 15px 10px 10px;
+    position: relative;
+    display: block;
+    width: 100%;
+    border-radius: 15px;
+    margin-top: 1rem;
+}
+
+.nav>li:hover, .nav>li:active {
+  outline: none;
+  cursor: pointer;
+  background-position: ceter center;
+  background: linear-gradient(to right, #009C0D, #A2DBA7);
+  color: gray !important;
+
+}
+
+.nav>li:active  {
+  color: #f4623a !important;
+}
+
+
+.nav > li::after{
+  background-color: gray;
+}
+
+.sidebar .nav i {
+    font-size: 28px;
+    float: left;
+    margin-right: 15px;
+    line-height: 30px;
+    width: 30px;
+    text-align: center;
+    color: white;
+}
+
+.sidebar .nav p {
+  margin: 0;
+  line-height: 30px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  position: relative;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  display: block;
+  height: auto;
+  opacity: 1;
+  color: white;
+}
