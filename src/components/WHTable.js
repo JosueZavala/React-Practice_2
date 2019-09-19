@@ -34,6 +34,7 @@ class WHTable extends React.Component{
             <thead>
               <tr>
                 <th>Code</th>
+                <th>Country Code</th>
                 <th>Name</th>
                 <th>Is Pickup Location?</th>
                 <th>Is Ikisok?</th>

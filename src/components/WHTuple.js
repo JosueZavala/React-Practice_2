@@ -10,6 +10,7 @@ class WHTuple extends React.Component{
     return (
         <tr>
           <td>{this.props.dataObject.Code}</td>
+          <td>{this.props.dataObject.CountryCode}</td>
           <td>{this.props.dataObject.Name}</td>
           <td>{this.props.dataObject.isIkiosk.toString()}</td>
           <td>{this.props.dataObject.isIkiosk.toString()}</td>
