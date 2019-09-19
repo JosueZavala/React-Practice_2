@@ -8,13 +8,26 @@ class WHTable extends React.Component{
     this.state = {
       show : false,
       setShow: false,
+      tupleArray: this.AddHandleEvent(),
+      handleShow: () => this.setState({ show: true }),
+      handleClose: () => this.setState({ show: false })
     }
+  }
 
+  AddHandleEvent(){
+    let newTupleArray = this.props.tupleArray;
+    newTupleArray = newTupleArray.map((item, index) => {
+      return (
+          React.cloneElement(
+            item,
+            {EventShowModal: this.state.handleShow}
+          )
+        )
+    });
+    return newTupleArray;
   }
 
   render() {
-    const handleClose = () => this.setState({ show: false });
-    const handleShow = () => this.setState({ show: true });
     return (
         <div className="row">
           <table className="table table-striped">
@@ -27,11 +40,11 @@ class WHTable extends React.Component{
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>{this.props.tupleArray}</tbody>
+            <tbody>{this.AddHandleEvent()}</tbody>
           </table>
           <MyModal
             show={this.state.show}
-            handleClose={handleClose}
+            handleClose={this.state.handleClose}
           />
         </div>
     );
