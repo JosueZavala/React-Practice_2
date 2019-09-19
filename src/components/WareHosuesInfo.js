@@ -85,34 +85,29 @@ class WareHosuesInfo extends React.Component{
     const itemsArray = [];
     const warehousesJson = this.state.Warehouses;
     const searchValueUpperCase = searchValue.toUpperCase();
+    let countryCodeUpperCase = '';
+    let countryFound = '';
 
     warehousesJson.forEach((data, index) => {
-      let codeUpperCase = data.Code.toUpperCase();
-      let nameUpperCase = data.Name.toUpperCase();
-      let shortNameUpperCase = data.ShortName.toUpperCase();
-      let cityUpperCase = data.City.toUpperCase();
-      let countryCodeUpperCase = data.CountryCode.toUpperCase();
+      countryCodeUpperCase = data.CountryCode.toUpperCase();
 
-
-      if ( countryCodeUpperCase.includes(searchValueUpperCase)
-           /*|| nameUpperCase.includes(searchValueUpperCase)
-           || cityUpperCase.includes(searchValueUpperCase)
-           || shortNameUpperCase.includes(searchValueUpperCase)
-           || codeUpperCase.includes(searchValueUpperCase) */){
-        itemsArray.push(
-              <WHTuple dataObject = {data}/>
+      if ( countryCodeUpperCase.includes(searchValueUpperCase) ){
+          itemsArray.push(
+              <WHTuple dataObject = {data} key = {"tuple"+index}/>
             );
+          countryFound = countryCodeUpperCase;
           }
         });
-      this.UpdateSetState(itemsArray, searchValue);
+      countryCodeUpperCase = countryFound ? countryFound : countryCodeUpperCase;
+      this.UpdateSetState(itemsArray, searchValue, countryCodeUpperCase);
     }
 
-    UpdateSetState(itemsArray, searchValue){
+    UpdateSetState(itemsArray, searchValue, countryCodeUpperCase){
         if (searchValue !== '' && itemsArray.length > 0 ) {
          this.setState({
            arrayTuple: itemsArray,
            displayContainer: '',
-           notFoundMessage: ''
+           notFoundMessage: 'Country Found: ' + countryCodeUpperCase
          });
        }else {
          this.setState({
