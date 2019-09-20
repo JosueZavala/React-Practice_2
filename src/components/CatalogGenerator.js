@@ -86,12 +86,6 @@ class CatalogGenerator extends React.Component{
 
         <div className="container">
            <div className="row">
-             <div className="col-sm">
-               Locales
-             </div>
-          </div>
-
-           <div className="row">
              <div className="col-sm dropDown-container">
                 <SearchInput
                   FunctionOnChange =  {this.RenderLocaleCards}
