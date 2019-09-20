@@ -105,7 +105,6 @@ class WareHosuesInfo extends React.Component{
     UpdateSetState(itemsArray, searchValue, countryCodeUpperCase){
         if (searchValue !== '' && itemsArray.length > 0 ) {
           let countriesWihtOutLastPoint = countryCodeUpperCase.substring(0, countryCodeUpperCase.length-2);
-          debugger;
           this.setState({
             arrayTuple: itemsArray,
             displayContainer: '',
