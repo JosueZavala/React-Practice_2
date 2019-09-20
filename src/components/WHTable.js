@@ -1,30 +1,8 @@
 import React from 'react';
-import MyModal  from '../components/MyModal';
 
 class WHTable extends React.Component{
   constructor(props){
     super(props);
-
-    this.state = {
-      show : false,
-      setShow: false,
-      tupleArray: this.AddHandleEvent(),
-      handleShow: () => this.setState({ show: true }),
-      handleClose: () => this.setState({ show: false })
-    }
-  }
-
-  AddHandleEvent(){
-    let newTupleArray = this.props.tupleArray;
-    newTupleArray = newTupleArray.map((item, index) => {
-      return (
-          React.cloneElement(
-            item,
-            {EventShowModal: this.state.handleShow}
-          )
-        )
-    });
-    return newTupleArray;
   }
 
   render() {
@@ -41,12 +19,8 @@ class WHTable extends React.Component{
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>{this.AddHandleEvent()}</tbody>
+            <tbody>{this.props.tupleArray}</tbody>
           </table>
-          <MyModal
-            show={this.state.show}
-            handleClose={this.state.handleClose}
-          />
         </div>
     );
   }
