@@ -10,26 +10,39 @@ class Toggle extends React.Component {
     		this.state = {
     			isChecked: this.props.isChecked
     		}
+
     }
 
     render () {
 
         return(
-            <div className="switch-container">
-                <label>
-                    <input ref="switch" checked={ this.state.isChecked } onChange={ this._handleChange } className="switch" type="checkbox" />
-                    <div>
-                      <div></div>
-                    </div>
-                </label>
-            </div>
+          <div>
+            <label className="switch">
+              <input type="checkbox" checked={ this.state.isChecked } onChange={ this._handleChange }></input>
+              <span className="slider round"></span>
+            </label>
+          </div>
         );
     }
 
 
     _handleChange () {
-        debugger;
-		    this.setState( { isChecked: !this.state.isChecked } );
+      let isChecked = this.state.isChecked;
+      const updateIsIkiosk = new Promise((resolve, reject) => {
+          setTimeout(() => isChecked ? resolve(isChecked) : reject(isChecked)
+            , 300);
+      });
+
+      updateIsIkiosk
+        .then((value) => {
+          this.setState({ isChecked: !this.state.isChecked});
+          alert(value);
+        })
+        .catch((error) => {
+          this.setState({ isChecked: !this.state.isChecked});
+          console.error(error);
+          alert(error);
+        });
     }
 
 }

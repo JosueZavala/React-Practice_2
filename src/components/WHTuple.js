@@ -27,10 +27,8 @@ class WHTuple extends React.Component{
           <td>{this.props.dataObject.Code}</td>
           <td>{this.props.dataObject.CountryCode}</td>
           <td>{this.props.dataObject.Name}</td>
-          <td>{this.props.dataObject.isIkiosk.toString()}
-            <Toggle isChecked={ true } />
-          </td>
           <td>{this.props.dataObject.isIkiosk.toString()}</td>
+          <td><Toggle isChecked={ this.props.dataObject.isIkiosk } /></td>
           <td className="text-center"><div className="btn btn-primary btn-sm" onClick={this.state.handleShow}><i className="fa fa-eye"></i></div></td>
           <MyModal
             show = {this.state.show}
@@ -39,7 +37,6 @@ class WHTuple extends React.Component{
           />
         </tr>
     );
-    debugger;
   }
 }
 
