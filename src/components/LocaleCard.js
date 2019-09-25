@@ -5,6 +5,7 @@ import SweetAlert from 'sweetalert2-react';
 class LocaleCard extends React.Component{
   constructor(props) {
     super(props);
+    this.SetSweetAlert = this.SetSweetAlert.bind(this);
 
     this.state = {
         show: false,
@@ -12,7 +13,7 @@ class LocaleCard extends React.Component{
         swaltitle: "",
         swaltext: "",
     }
-    this.SetSweetAlert = this.SetSweetAlert.bind(this);
+
   }
 
   SetSweetAlert(type, title, text) {

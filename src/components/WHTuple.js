@@ -12,28 +12,47 @@ class WHTuple extends React.Component{
       show : false,
       handleShow: () => this.setState({ show: true }),
       handleClose: () => this.setState({ show: false }),
-      toggleActive: false
+      toggleActive: false,
+      isIkiosk: this.props.dataObject.isIkiosk,
+      dataObject: this.props.dataObject
     }
   }
 
   onToggle() {
-   this.setState({ toggleActive: !this.state.toggleActive });
+    let newObject = this.state.dataObject;
+    newObject.isIkiosk = !this.state.isIkiosk;
+
+   this.setState({
+     toggleActive: !this.state.toggleActive,
+     isIkiosk: !this.state.isIkiosk,
+     dataObject: newObject
+   });
   }
 
   render() {
 
     return (
         <tr>
-          <td>{this.props.dataObject.Code}</td>
-          <td>{this.props.dataObject.CountryCode}</td>
-          <td>{this.props.dataObject.Name}</td>
-          <td>{this.props.dataObject.isIkiosk.toString()}</td>
-          <td><Toggle isChecked={ this.props.dataObject.isIkiosk } /></td>
-          <td className="text-center"><div className="btn btn-primary btn-sm" onClick={this.state.handleShow}><i className="fa fa-eye"></i></div></td>
+          <td>{this.state.dataObject.Code}</td>
+          <td>{this.state.dataObject.CountryCode}</td>
+          <td>{this.state.dataObject.Name}</td>
+          <td>{this.state.isIkiosk.toString()}</td>
+          <td>
+              <Toggle
+                isChecked = { this.state.isIkiosk }
+                warehouseName = { this.state.dataObject.Name }
+                upDateIkiosk = { this.onToggle }
+              />
+          </td>
+          <td className="text-center">
+            <div className="btn btn-primary btn-sm" onClick={this.state.handleShow}>
+              <i className="fa fa-eye"></i>
+            </div>
+          </td>
           <MyModal
             show = {this.state.show}
             handleClose = {this.state.handleClose}
-            data = {this.props.dataObject}
+            data = {this.state.dataObject}
           />
         </tr>
     );
