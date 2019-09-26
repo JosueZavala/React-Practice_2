@@ -1,6 +1,8 @@
 import React from 'react';
 import LocaleCard from '../components/LocaleCard';
-import SearchInput from '../components/SearchInput'
+import SearchInput from '../components/SearchInput';
+import '../Styles/CatalogGenerator.css';
+
 
 class CatalogGenerator extends React.Component{
   constructor(props){
@@ -32,7 +34,7 @@ class CatalogGenerator extends React.Component{
         }
       ],
       arrayCards: [],
-      displayContainer: 'none',
+      display: false,
       notFoundMessage: ''
     }
   }
@@ -61,13 +63,13 @@ class CatalogGenerator extends React.Component{
       if (searchValue !== '' && itemsArray.length > 0) {
        this.setState({
          arrayCards: itemsArray,
-         displayContainer: '',
+         display: true,
          notFoundMessage: '',
        });
      }else {
        this.setState({
          arrayCards: [],
-         displayContainer: 'none',
+         display: false,
          notFoundMessage: 'Any country or Locale found with: ' + searchValue,
        });
      }
@@ -84,18 +86,17 @@ class CatalogGenerator extends React.Component{
           </div>
         </div>
 
-        <div className="container">
-           <div className="row">
+        <div className="row">
+          <div className="container">
              <div className="col-sm dropDown-container">
                 <SearchInput
                   FunctionOnChange =  {this.RenderLocaleCards}
                   Message = {this.state.notFoundMessage}
                 />
-                <div
-                  className="row card-Locales-container"
-                  style={{ display: `${this.state.displayContainer}`}}
-                  >
-                  {this.state.arrayCards}
+                <div className="row">
+                  <div className={"card-Locales-container " + (this.state.display ? '' : 'hideContainer')}>
+                    {this.state.arrayCards}
+                  </div>
                 </div>
              </div>
           </div>
