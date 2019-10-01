@@ -16,16 +16,10 @@ body {
   border-bottom: 1px solid gray;
 }
 
-.dropDown-container, .card-Locales-container{
+.dropDown-container{
   background: rgba(226,226,226,.5);
   padding: 15px;
   margin-bottom: 2rem;
   margin-top: 1rem;
   float: left;
-}
-
-.card-Locales-container{
-  overflow-y: auto;
-  max-height: 560px;
-  min-width: 660px;
 }

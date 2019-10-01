@@ -1,8 +1,4 @@
-.hideContainer{
-  display: none;
-}
-
-.card-Locales-container{
+.restrictions-container{
   background: rgba(226,226,226,.5);
   padding: 15px;
   margin-bottom: 2rem;
