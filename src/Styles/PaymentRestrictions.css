@@ -8,3 +8,12 @@
   max-height: 560px;
   min-width: 660px;
 }
+
+.title-segment, .options-container{
+  margin-left: 2rem;
+}
+
+.options-container{
+  background-color: white;
+  padding: 1rem;
+}
