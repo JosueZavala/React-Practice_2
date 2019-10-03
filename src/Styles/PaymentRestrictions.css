@@ -1,19 +1,69 @@
-.restrictions-container{
+.restrictions-container, .actions-container{
+  height: 11rem;
   background: rgba(226,226,226,.5);
   padding: 15px;
   margin-bottom: 2rem;
   margin-top: 1rem;
   float: left;
   overflow-y: auto;
-  max-height: 560px;
-  min-width: 660px;
+  min-height: 150px;
+}
+
+.restrictions-container{
+  width: 80%;
+}
+
+.actions-container{
+  min-width: 20%;
+  padding-left: 3rem;
+  padding-top: 3rem;
+  font-size: 24px;
+}
+
+.first-step, .second-step{
+  width: 100%
 }
 
 .title-segment, .options-container{
   margin-left: 2rem;
 }
 
+.nowrap-row{
+  display: flex;
+  flex-wrap: nowrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
 .options-container{
+  max-width: 90%;
+  width: 90rem;
+  max-height: 7rem;
   background-color: white;
   padding: 1rem;
+  float: left;
+  overflow-x: scroll;
+}
+
+.action-button{
+  padding: 0.5rem;
+}
+
+@media (max-width: 1225px) {
+  .actions-container{
+    padding-left: 1rem;
+    padding-top: 3.5rem;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 920px) {
+  .actions-container{
+    padding-left: 8px;
+    padding-right: 0rem;
+    font-size: 12px;
+  }
+  .action-button{
+    margin-right: 0px;
+  }
 }

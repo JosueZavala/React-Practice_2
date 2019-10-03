@@ -1,4 +1,5 @@
 import React from 'react';
+import '../Styles/OptionCard.css';
 
 class OptionCard extends React.Component{
   constructor(){
@@ -11,9 +12,9 @@ class OptionCard extends React.Component{
   render() {
 
     return (
-      <div className="">
-        <label>
-          <input type="radio" name={this.props.inputName} value={this.props.text} />
+      <div className="col-2">
+        <label className="principal-card" for={this.props.text}>
+          <input type="radio" name={this.props.inputName} value={this.props.text} id={this.props.text} />
           {this.props.text}
         </label>
       </div>
