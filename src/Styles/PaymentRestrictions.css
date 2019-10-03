@@ -1,4 +1,4 @@
-.restrictions-container, .actions-container{
+.locales-container, .restrictions-container, .actions-container, .actions-restrictions-container{
   height: 11rem;
   background: rgba(226,226,226,.5);
   padding: 15px;
@@ -9,18 +9,26 @@
   min-height: 150px;
 }
 
-.restrictions-container{
+.locales-container{
   width: 80%;
 }
 
-.actions-container{
+.restrictions-container{
+  width: 73%;
+}
+
+.actions-container, .actions-restrictions-container{
   min-width: 20%;
   padding-left: 3rem;
   padding-top: 3rem;
   font-size: 24px;
 }
 
-.first-step, .second-step{
+.actions-restrictions-container{
+  min-width: 27%;
+}
+
+.first-step, .second-step, .third-step{
   width: 100%
 }
 
@@ -49,11 +57,34 @@
   padding: 0.5rem;
 }
 
+.general-restrictions, .payment-restrictions-panel{
+  width: 40%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+
+@media (max-width: 1511px) {
+  .actions-restrictions-container{
+    min-width: 20%;
+    font-size: 16px;
+  }
+
+  .restrictions-container{
+    width: 75%;
+  }
+
+  .actions-container{
+    font-size: 16px;
+  }
+}
+
+
 @media (max-width: 1225px) {
   .actions-container{
     padding-left: 1rem;
     padding-top: 3.5rem;
-    font-size: 18px;
+    font-size: 14px;
   }
 }
 
