@@ -1,12 +1,12 @@
 .locales-container, .restrictions-container, .actions-container, .actions-restrictions-container{
   height: 11rem;
+  min-height: 150px;
   background: rgba(226,226,226,.5);
   padding: 15px;
   margin-bottom: 2rem;
   margin-top: 1rem;
   float: left;
   overflow-y: auto;
-  min-height: 150px;
 }
 
 .locales-container{
@@ -79,6 +79,15 @@
   }
 }
 
+@media (max-width: 1410px) {
+  .actions-restrictions-container{
+    padding-left: 1.5rem;
+    font-size: 14px;
+  }
+}
+
+
+
 
 @media (max-width: 1225px) {
   .actions-container{
@@ -86,15 +95,56 @@
     padding-top: 3.5rem;
     font-size: 14px;
   }
+  .actions-restrictions-container{
+    padding-left: 1rem;
+    font-size: 14px;
+  }
+  .action-button{
+    margin-right: 0.4rem;
+  }
+
 }
 
 @media (max-width: 920px) {
-  .actions-container{
+  .actions-container, .actions-restrictions-container{
     padding-left: 8px;
-    padding-right: 0rem;
-    font-size: 12px;
+    padding-right: 0.5rem;
+    font-size: 14px;
+
   }
+
   .action-button{
-    margin-right: 0px;
+    
+
   }
+
+  .general-restrictions{
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 652px) {
+  .actions-restrictions-container{
+    padding: 10px;
+    min-height: 60px;
+    width: 75%;
+  }
+
+  .action-button{
+    margin-left: 3rem;
+    font-size: 13px;
+  }
+
+ .restrictions-container, .actions-restrictions-container{
+   /*height: 98px;*/
+   max-height: 166px;
+   margin-bottom: 0rem;
+   margin-top: 0rem;
+   padding-right: 1.3rem;
+ }
+
+ .general-restrictions{
+   margin-top: 20px;
+ }
+
 }
