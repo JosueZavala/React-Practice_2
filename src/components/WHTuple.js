@@ -41,7 +41,7 @@ class WHTuple extends React.Component{
               <Toggle
                 isChecked = { this.state.isIkiosk }
                 warehouseName = { this.state.dataObject.Name }
-                upDateIkiosk = { this.onToggle }
+                toggleChanged = { this.onToggle }
               />
           </td>
           <td className="text-center">

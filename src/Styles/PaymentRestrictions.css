@@ -9,6 +9,20 @@
   overflow-y: auto;
 }
 
+.second-step .restrictions-container{
+  margin-bottom: 0rem;
+}
+
+.second-step .actions-restrictions-container{
+  margin-bottom: 0rem;
+}
+
+.toggle-container{
+  
+  padding: 15px;
+  margin-bottom: 2rem;
+}
+
 .locales-container{
   width: 80%;
 }
@@ -114,7 +128,7 @@
   }
 
   .action-button{
-    
+
 
   }
 

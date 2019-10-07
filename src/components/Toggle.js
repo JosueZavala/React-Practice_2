@@ -67,7 +67,7 @@ class Toggle extends React.Component {
           console.error(error);
           this.SetSweetAlert("error",sweetAlertTitle,"Ikiosk changed to False")
         });
-      this.props.upDateIkiosk();
+      this.props.toggleChanged();
     }
 
 }

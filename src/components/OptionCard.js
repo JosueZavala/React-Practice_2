@@ -12,7 +12,7 @@ class OptionCard extends React.Component{
   render() {
 
     return (
-      <div className="col-2">
+      <div>
         <label className="principal-card" for={this.props.text}>
           <input type="radio" name={this.props.inputName} value={this.props.text} id={this.props.text} />
           {this.props.text}
