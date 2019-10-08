@@ -17,7 +17,7 @@ class Toggle extends React.Component {
         return(
           <div>
             <label className="switch">
-              <input type="checkbox" checked={ this.state.isChecked } onChange={ this._handleChange }></input>
+              <input type="checkbox" checked={ this.props.isChecked } onChange={ this._handleChange }></input>
               <span className="slider round"></span>
             </label>
           </div>
