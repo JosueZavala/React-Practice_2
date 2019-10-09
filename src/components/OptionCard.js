@@ -14,16 +14,28 @@ class OptionCard extends React.Component{
   }
 
   render() {
-
+    let colorClass = '';
+    switch (this.props.color) {
+      case 2:
+          colorClass='warehouse-color';
+        break;
+      case 3:
+          colorClass='sku-color';
+        break;
+      default:
+          colorClass='locale-color';
+    }
+    debugger;
     return (
       <div>
-        <label className="principal-card" htmlFor={this.props.text}>
+        <label
+            className={"principal-card "+colorClass}
+            htmlFor={this.props.text}>
           <input
             type = "radio"
             name = {this.props.inputName}
             value = {this.props.text}
             id = {this.props.text}
-
             onChange = {evt => this._handleOnChange(evt)}/>
           {this.props.text}
         </label>
