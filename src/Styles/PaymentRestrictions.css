@@ -3,22 +3,26 @@
   min-height: 150px;
   background: rgba(226,226,226,.5);
   padding: 15px;
-  margin-bottom: 2rem;
-  margin-top: 1rem;
   float: left;
   overflow-y: auto;
 }
 
 .second-step .restrictions-container{
   margin-bottom: 0rem;
+  height: 15rem;
 }
 
 .second-step .actions-restrictions-container{
   margin-bottom: 0rem;
+  height: 15rem;
+}
+
+.second-step .options-container{
+  max-height: 11rem;
 }
 
 .toggle-container{
-  
+
   padding: 15px;
   margin-bottom: 2rem;
 }
@@ -55,6 +59,7 @@
   flex-wrap: nowrap;
   margin-right: -15px;
   margin-left: -15px;
+  padding-left: .75rem;
 }
 
 .options-container{

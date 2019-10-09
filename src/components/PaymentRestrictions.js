@@ -7,9 +7,8 @@ import '../Styles/PaymentRestrictions.css';
 class PaymentRestrictions extends React.Component{
   constructor(){
     super();
-    this.SearchInWarehouses = this.SearchInWarehouses.bind(this);
     this.ShowSKURestrictions = this.ShowSKURestrictions.bind(this);
-    this.GenerateOptionCards = this.GenerateOptionCards.bind(this);
+    this.GenerateLocaleOptionCards = this.GenerateLocaleOptionCards.bind(this);
     this.UpdateLocaleSelected = this.UpdateLocaleSelected.bind(this);
     this.LocalesNextButton = this.LocalesNextButton.bind(this);
 
@@ -180,16 +179,53 @@ class PaymentRestrictions extends React.Component{
             }
           ]
         },
+        apiwarehousesResponse: {
+          "NPS": true,
+          "invoiceOption": "WithPackage",
+          "BambooPrinter": false,
+          "dropshipmentorder": true,
+          "orderSubTypeMap": null,
+          "paymentConfiguration": [
+            {
+              "wareHouse": "*",
+              "hasCreditCardInput": true,
+              "hasManualCreditCardInput": false,
+              "hasCashInput": false,
+              "HasPGHCreditCardInput": false,
+              "hasUpiInput": false,
+              "hasNetBankingInput": false,
+              "hasBayadCenterInput": false
+            },
+            {
+              "wareHouse": "E1",
+              "hasCreditCardInput": true,
+              "hasManualCreditCardInput": true,
+              "hasCashInput": true,
+              "HasPGHCreditCardInput": false,
+              "hasUpiInput": false,
+              "hasNetBankingInput": false,
+              "hasBayadCenterInput": false
+            },
+            {
+              "wareHouse": "EXt2",
+              "hasCreditCardInput": true,
+              "hasManualCreditCardInput": true,
+              "hasCashInput": false,
+              "HasPGHCreditCardInput": true,
+              "hasUpiInput": false,
+              "hasNetBankingInput": false,
+              "hasBayadCenterInput": false
+            }
+          ]
+        },
         localesArray: [],
-        arrayOptionCards: [],
+        warehousesArray: [],
+        localesOptionCards: [],
+        warehousesOptionCards: [],
         localeSelected: '',
         toggleChecked: false
     };
   }
-
-  SearchInWarehouses(searchValue){
-    console.log(searchValue);
-    }
 
   ShowSKURestrictions() {
      this.setState({
@@ -200,19 +236,10 @@ class PaymentRestrictions extends React.Component{
 
   UpdateLocaleSelected(locale) {
     this.setState({ localeSelected: locale });
-    //console.log(locale);
+
   }
 
-  LocalesNextButton(){
-    let _locale = this.state.localeSelected;
-    this.setState({
-      stepTwo: true,
-      stepThree: false,
-      toggleChecked: false
-    });
-  }
-
-  GenerateOptionCards(searchValue){
+  GenerateLocaleOptionCards(searchValue){
     const itemsArray = [];
     const _localesArray = this.state.localesArray;
     const searchValueUpperCase = searchValue.toUpperCase();
@@ -227,7 +254,7 @@ class PaymentRestrictions extends React.Component{
           itemsArray.push(
               <OptionCard
                 FunctionOnChange = {this.UpdateLocaleSelected}
-
+                color={1}
                 text={data} inputName="locales" key={index}/>
             );
           countryFound += countryCodeUpperCase + ', ';
@@ -237,37 +264,73 @@ class PaymentRestrictions extends React.Component{
       this.UpdateSetState(itemsArray, searchValue, countryCodeUpperCase);
     }
 
-    UpdateSetState(itemsArray, searchValue, countryCodeUpperCase){
-        if (searchValue !== '' && itemsArray.length > 0 ) {
-          let countriesWihtOutLastPoint = countryCodeUpperCase.substring(0, countryCodeUpperCase.length-2);
-          this.setState({
-            arrayOptionCards: itemsArray,
-            stepOne: true,
-            stepTwo: false,
-            stepThree: false,
-            toggleChecked: false,
-            notFoundMessage: 'Country Found: ' + countriesWihtOutLastPoint
-          });
-       }else {
-         this.setState({
-           arrayOptionCards: [],
-           stepOne: false,
-           stepTwo: false,
-           stepThree: false,
-           toggleChecked: false,
-           notFoundMessage: 'Any country or Locale found with: ' + searchValue
-         });
-       }
-    }
+  UpdateSetState(itemsArray, searchValue, countryCodeUpperCase){
+      if (searchValue !== '' && itemsArray.length > 0 ) {
+        let countriesWihtOutLastPoint = countryCodeUpperCase.substring(0, countryCodeUpperCase.length-2);
+        this.setState({
+          localesOptionCards: itemsArray,
+          stepOne: true,
+          stepTwo: false,
+          stepThree: false,
+          toggleChecked: false,
+          notFoundMessage: 'Country Found: ' + countriesWihtOutLastPoint
+        });
+     }else {
+       this.setState({
+         localesOptionCards: [],
+         stepOne: false,
+         stepTwo: false,
+         stepThree: false,
+         toggleChecked: false,
+         notFoundMessage: 'Any country or Locale found with: ' + searchValue
+       });
+     }
+  }
 
-  componentWillMount(){
+  LocalesNextButton(evt){
+    this.UpdateWarehousesArray();
+  }
+
+  UpdateWarehousesArray(){
+    const _paymentConfigurations = this.state.apiwarehousesResponse.paymentConfiguration;
+    const _warehousesArray = [];
+    _paymentConfigurations.forEach((item, index) => {
+      _warehousesArray.push(item.wareHouse);
+    });
+    this.setState({ warehousesArray: _warehousesArray });
+
+    this.GenerateWarehousesOptionCards(_warehousesArray);
+  }
+
+  GenerateWarehousesOptionCards(warehousesArray){
+    const _itemsArray = [];
+    const _warehousesArray = warehousesArray;
+
+    _warehousesArray.forEach((data, index) => {
+      _itemsArray.push(
+          <OptionCard
+            FunctionOnChange = {() => {}}
+            color={2}
+            text={data} inputName="warehouses" key={index}/>
+        );
+    });
+    this.setState({
+      warehousesOptionCards: _itemsArray,
+      stepTwo: true,
+      stepThree: false,
+      toggleChecked: false
+    });
+  }
+
+
+
+  componentDidMount(){
     let localeArrayfromAPI = this.state.apiLocaleResponse.locales;
     let codeArray = [];
-    localeArrayfromAPI.map((item) => {
+    localeArrayfromAPI.forEach((item) => {
       codeArray.push(item.code);
     });
     this.setState({ localesArray: codeArray });
-    console.log(codeArray);
   }
 
   render() {
@@ -283,7 +346,7 @@ class PaymentRestrictions extends React.Component{
             <div className="container">
               <div className="col-sm dropDown-container">
                 <SearchInput
-                  FunctionOnChange = {this.GenerateOptionCards}
+                  FunctionOnChange = {this.GenerateLocaleOptionCards}
                   Message = {this.state.notFoundMessage}
                 />
                 {/*First Section*/}
@@ -298,13 +361,13 @@ class PaymentRestrictions extends React.Component{
                       <div className="row">
                         <div className="options-container">
                           <div className="nowrap-row">
-                            {this.state.arrayOptionCards}
+                            {this.state.localesOptionCards}
                           </div>
                         </div>
                       </div>
                     </div>
                     <div className="actions-container">
-                      <button className="action-button" onClick = {this.LocalesNextButton}>Next</button>
+                      <button className="action-button" onClick = { evt => this.LocalesNextButton(evt) }>Next</button>
                     </div>
                  </div>
                 </div>
@@ -320,7 +383,7 @@ class PaymentRestrictions extends React.Component{
                       </div>
                       <div className="row">
                         <div className="col-xl-5 col-lg-5 col-md-5 col-sm-5 options-container general-restrictions">
-
+                          {this.state.warehousesOptionCards}
                         </div>
                         <div className="col-xl-5 col-lg-4 col-md-4 col-sm-4 options-container general-restrictions">
 
@@ -333,7 +396,7 @@ class PaymentRestrictions extends React.Component{
                       <button className="action-button">Reset</button>
                     </div>
                     <div className="toggle-container">
-                     SKU Restrictions.
+                     Show SKU Restrictions.
                      <Toggle
                         isChecked = {this.state.toggleChecked}
                         toggleChanged = {this.ShowSKURestrictions}
