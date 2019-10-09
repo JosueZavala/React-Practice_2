@@ -10,7 +10,7 @@
 .principal-card{
     width: 7rem;
     min-height: 2.6rem;
-    background-color: #4CAF50;
+
     color: white;
     border-radius: 5px 5px 5px 5px;
     -moz-border-radius: 5px 5px 5px 5px;
@@ -23,4 +23,17 @@
     font-size: 20px;
     margin-left: 0.25rem;
     margin-right: 0.25rem;
+    float: left;
+}
+
+.locale-color{
+  background-color: #4CAF50;
+}
+
+.warehouse-color{
+  background-color: #0C9DE8;
+}
+
+.sku-color{
+  background-color: #38D1FF;
 }
