@@ -10,7 +10,6 @@
 .principal-card{
     width: 7rem;
     min-height: 2.6rem;
-
     color: white;
     border-radius: 5px 5px 5px 5px;
     -moz-border-radius: 5px 5px 5px 5px;
@@ -24,6 +23,15 @@
     margin-left: 0.25rem;
     margin-right: 0.25rem;
     float: left;
+}
+
+.hidden-input{
+  display: none;
+}
+
+input[type="radio"]:checked + label{
+  -webkit-box-shadow: 5px 5px 15px 5px #000000;
+  box-shadow: 5px 5px 15px 5px #000000;
 }
 
 .locale-color{
