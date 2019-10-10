@@ -2,6 +2,7 @@ import React from 'react';
 import SearchInput from '../components/SearchInput';
 import OptionCard from '../components/OptionCard';
 import Toggle from '../components/Toggle';
+import UniqueId from 'react-html-id';
 import '../Styles/PaymentRestrictions.css';
 
 class PaymentRestrictions extends React.Component{
@@ -12,6 +13,7 @@ class PaymentRestrictions extends React.Component{
     this.UpdateLocaleSelected = this.UpdateLocaleSelected.bind(this);
     this.UpdateWarehousesArray = this.UpdateWarehousesArray.bind(this);
     this.UpdateWareHouseSelected = this.UpdateWareHouseSelected.bind(this);
+    UniqueId.enableUniqueIds(this);
 
     this.state = {
         stepOne: false,
@@ -263,7 +265,7 @@ class PaymentRestrictions extends React.Component{
               <OptionCard
                 FunctionOnChange = {this.UpdateLocaleSelected}
                 color={1}
-                text={data} inputName="locales" key={index}/>
+                text={data} inputName="locales" key={this.nextUniqueId()}/>
             );
           countryFound += countryCodeUpperCase + ', ';
           }
@@ -310,12 +312,13 @@ class PaymentRestrictions extends React.Component{
     const _itemsArray = [];
     const _warehousesArray = warehousesArray;
 
+
     _warehousesArray.forEach((data, index) => {
       _itemsArray.push(
           <OptionCard
             FunctionOnChange = {this.UpdateWareHouseSelected}
             color={2}
-            text={data} inputName="warehouses" key={index}/>
+            text={data} inputName="warehouses" key={this.nextUniqueId()}/>
         );
     });
     this.setState({
@@ -338,30 +341,33 @@ class PaymentRestrictions extends React.Component{
 
     _paymentConfigurations.forEach((item) =>{
       if(item.wareHouse === _warehouseSelected){
-        _restrictionsObj = item;
+        _restrictionsObj = {...item};
       }
     });
     delete _restrictionsObj.wareHouse;
     this.setState({ restrictionsWHSelected: _restrictionsObj});
-    //this.GenerateWHRestrictionsToggles(_restrictionsObj);
+    this.GenerateWHRestrictionsToggles(_restrictionsObj);
   }
 
   GenerateWHRestrictionsToggles(restrictionsObj){
     let _restrictionsObj = restrictionsObj;
     let _whRestrictionsToggles = [];
-    //whRestrictionsToogles
+    let styleRight = { float: 'right'};
+    let heightStyle = { height: '45px' };
+
     for( const restriction in _restrictionsObj ){
       let _restriction = this._beautyRestriction(restriction);
       _whRestrictionsToggles.push(
-        <div>
-        {_restriction} :
+        <div style={heightStyle}>
+        <label className="styleLeft">{_restriction}:</label>
         <Toggle
            isChecked = {_restrictionsObj[restriction]}
            toggleChanged = {() => {}}
+           styles={styleRight}
+           key={this.nextUniqueId()}
         />
         </div>
       );
-      console.log(restriction + ": " +_restrictionsObj[restriction]);
     }
     this.setState({ whRestrictionsToggles: _whRestrictionsToggles });
 
