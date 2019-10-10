@@ -13,32 +13,35 @@ class OptionCard extends React.Component{
     this.props.FunctionOnChange(e.target.value);
   }
 
-  render() {
-    let colorClass = '';
+  _selectColor(){
+    let _colorClass = '';
     switch (this.props.color) {
       case 2:
-          colorClass='warehouse-color';
+          _colorClass='warehouse-color';
         break;
       case 3:
-          colorClass='sku-color';
+          _colorClass='sku-color';
         break;
       default:
-          colorClass='locale-color';
+          _colorClass='locale-color';
     }
-    debugger;
+    return _colorClass;
+  }
+
+  render() {
+    let colorClass = this._selectColor();
     return (
       <div>
-        <label
-            className={"principal-card "+colorClass}
-            htmlFor={this.props.text}>
-          <input
-            type = "radio"
-            name = {this.props.inputName}
-            value = {this.props.text}
-            id = {this.props.text}
-            onChange = {evt => this._handleOnChange(evt)}/>
-          {this.props.text}
-        </label>
+        <input
+          type = "radio"
+          name = {this.props.inputName}
+          value = {this.props.text}
+          id = {this.props.text}
+          className = "hidden-input"
+          onChange = {evt => this._handleOnChange(evt)}/>
+          <label className={"principal-card "+colorClass} htmlFor={this.props.text}>
+            {this.props.text}
+          </label>
       </div>
     );
   }
