@@ -10,7 +10,8 @@ class PaymentRestrictions extends React.Component{
     this.ShowSKURestrictions = this.ShowSKURestrictions.bind(this);
     this.GenerateLocaleOptionCards = this.GenerateLocaleOptionCards.bind(this);
     this.UpdateLocaleSelected = this.UpdateLocaleSelected.bind(this);
-    this.LocalesNextButton = this.LocalesNextButton.bind(this);
+    this.UpdateWarehousesArray = this.UpdateWarehousesArray.bind(this);
+    this.UpdateWareHouseSelected = this.UpdateWareHouseSelected.bind(this);
 
     this.state = {
         stepOne: false,
@@ -222,21 +223,28 @@ class PaymentRestrictions extends React.Component{
         warehousesArray: [],
         localesOptionCards: [],
         warehousesOptionCards: [],
+        whRestrictionsToggles: [],
         localeSelected: '',
-        toggleChecked: false
+        warehouseSelected: '',
+        restrictionsWHSelected: {},
+        toggleShowSKU: false
     };
   }
 
   ShowSKURestrictions() {
      this.setState({
        stepThree: !this.state.stepThree,
-       toggleChecked: !this.state.toggleChecked
+       toggleShowSKU: !this.state.toggleShowSKU
      });
   }
 
   UpdateLocaleSelected(locale) {
-    this.setState({ localeSelected: locale });
-
+    this.setState({
+      localeSelected: locale,
+      toggleShowSKU: false,
+      stepTwo: false,
+      stepThree: false
+    });
   }
 
   GenerateLocaleOptionCards(searchValue){
@@ -272,7 +280,7 @@ class PaymentRestrictions extends React.Component{
           stepOne: true,
           stepTwo: false,
           stepThree: false,
-          toggleChecked: false,
+          toggleShowSKU: false,
           notFoundMessage: 'Country Found: ' + countriesWihtOutLastPoint
         });
      }else {
@@ -281,14 +289,10 @@ class PaymentRestrictions extends React.Component{
          stepOne: false,
          stepTwo: false,
          stepThree: false,
-         toggleChecked: false,
+         toggleShowSKU: false,
          notFoundMessage: 'Any country or Locale found with: ' + searchValue
        });
      }
-  }
-
-  LocalesNextButton(evt){
-    this.UpdateWarehousesArray();
   }
 
   UpdateWarehousesArray(){
@@ -309,7 +313,7 @@ class PaymentRestrictions extends React.Component{
     _warehousesArray.forEach((data, index) => {
       _itemsArray.push(
           <OptionCard
-            FunctionOnChange = {() => {}}
+            FunctionOnChange = {this.UpdateWareHouseSelected}
             color={2}
             text={data} inputName="warehouses" key={index}/>
         );
@@ -318,19 +322,79 @@ class PaymentRestrictions extends React.Component{
       warehousesOptionCards: _itemsArray,
       stepTwo: true,
       stepThree: false,
-      toggleChecked: false
+      toggleShowSKU: false
     });
   }
 
+  UpdateWareHouseSelected(warehouse){
+    this.setState({ warehouseSelected: warehouse });
+    this.GetWHRestrictionsObject(warehouse);
+  }
 
+  GetWHRestrictionsObject(warehouse){
+    const _paymentConfigurations = this.state.apiwarehousesResponse.paymentConfiguration;
+    const _warehouseSelected = warehouse;
+    let _restrictionsObj = {};
 
-  componentDidMount(){
-    let localeArrayfromAPI = this.state.apiLocaleResponse.locales;
-    let codeArray = [];
-    localeArrayfromAPI.forEach((item) => {
-      codeArray.push(item.code);
+    _paymentConfigurations.forEach((item) =>{
+      if(item.wareHouse === _warehouseSelected){
+        _restrictionsObj = item;
+      }
     });
-    this.setState({ localesArray: codeArray });
+    delete _restrictionsObj.wareHouse;
+    this.setState({ restrictionsWHSelected: _restrictionsObj});
+    //this.GenerateWHRestrictionsToggles(_restrictionsObj);
+  }
+
+  GenerateWHRestrictionsToggles(restrictionsObj){
+    let _restrictionsObj = restrictionsObj;
+    let _whRestrictionsToggles = [];
+    //whRestrictionsToogles
+    for( const restriction in _restrictionsObj ){
+      let _restriction = this._beautyRestriction(restriction);
+      _whRestrictionsToggles.push(
+        <div>
+        {_restriction} :
+        <Toggle
+           isChecked = {_restrictionsObj[restriction]}
+           toggleChanged = {() => {}}
+        />
+        </div>
+      );
+      console.log(restriction + ": " +_restrictionsObj[restriction]);
+    }
+    this.setState({ whRestrictionsToggles: _whRestrictionsToggles });
+
+  }
+
+  _beautyRestriction(uglyRestriction){
+    let beautyRestriction;
+    switch (uglyRestriction) {
+      case 'hasCreditCardInput':
+          beautyRestriction = 'Credit Card';
+        break;
+      case 'hasManualCreditCardInput':
+          beautyRestriction = 'Manual Credit Card';
+        break;
+      case 'hasCashInput':
+          beautyRestriction = 'Cash';
+        break;
+      case 'HasPGHCreditCardInput':
+          beautyRestriction = 'PGH Credit Card';
+        break;
+      case 'hasUpiInput':
+          beautyRestriction = 'Upi';
+        break;
+      case 'hasNetBankingInput':
+          beautyRestriction = 'Net Banking';
+        break;
+      case 'hasBayadCenterInput':
+          beautyRestriction = 'Bayad Center';
+        break;
+      default:
+          beautyRestriction = 'Unknown Pay method';
+    }
+    return beautyRestriction;
   }
 
   render() {
@@ -349,6 +413,7 @@ class PaymentRestrictions extends React.Component{
                   FunctionOnChange = {this.GenerateLocaleOptionCards}
                   Message = {this.state.notFoundMessage}
                 />
+
                 {/*First Section*/}
                 <div className="row">
                  <div className={"first-step " + (this.state.stepOne ? '' : 'hideContainer')}>
@@ -367,7 +432,7 @@ class PaymentRestrictions extends React.Component{
                       </div>
                     </div>
                     <div className="actions-container">
-                      <button className="action-button" onClick = { evt => this.LocalesNextButton(evt) }>Next</button>
+                      <button className="action-button" onClick = {this.UpdateWarehousesArray}>Next</button>
                     </div>
                  </div>
                 </div>
@@ -386,7 +451,7 @@ class PaymentRestrictions extends React.Component{
                           {this.state.warehousesOptionCards}
                         </div>
                         <div className="col-xl-5 col-lg-4 col-md-4 col-sm-4 options-container general-restrictions">
-
+                          {this.state.whRestrictionsToggles}
                         </div>
 
                       </div>
@@ -398,7 +463,7 @@ class PaymentRestrictions extends React.Component{
                     <div className="toggle-container">
                      Show SKU Restrictions.
                      <Toggle
-                        isChecked = {this.state.toggleChecked}
+                        isChecked = {this.state.toggleShowSKU}
                         toggleChanged = {this.ShowSKURestrictions}
                      />
                     </div>
@@ -437,6 +502,16 @@ class PaymentRestrictions extends React.Component{
       </div>
     );
   }
+
+  componentDidMount(){
+    let localeArrayfromAPI = this.state.apiLocaleResponse.locales;
+    let codeArray = [];
+    localeArrayfromAPI.forEach((item) => {
+      codeArray.push(item.code);
+    });
+    this.setState({ localesArray: codeArray });
+  }
+
 }
 
 export default PaymentRestrictions
