@@ -13,10 +13,10 @@ class App extends React.Component{
     return (
       <BrowserRouter>
         <div className="row principal-row">
-            <div className="col-3">
+            <div className="col-2">
               <SideBar />
             </div>
-            <div className="col-9">
+            <div className="col-10">
               <div  className="row">
                 <div className="col-12">
                   <Switch>
