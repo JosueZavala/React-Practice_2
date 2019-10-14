@@ -17,8 +17,7 @@ constructor(props){
     return (
       <li>
         <NavLink to={this.state.navTo}>
-          <p>{this.state.title}</p>
-          <i className={this.state.iconAwesome}></i>
+          <p>{this.state.title} <i id="menu-icon" className={this.state.iconAwesome}></i></p>
         </NavLink>
       </li>
     );

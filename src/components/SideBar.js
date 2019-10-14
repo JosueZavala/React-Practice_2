@@ -17,12 +17,13 @@ class SideBar extends React.Component{
 
     return (
 
-      <div id="wrapper" class={(this.state.addClass ? 'active' : '')}>
+      <div id="wrapper" className={(this.state.addClass ? 'active' : '')}>
       <div id="sidebar-wrapper">
-        <ul id="sidebar_menu" class="sidebar-nav">
-          <li class="sidebar-brand" onClick={this.toggle.bind(this)}><a id="menu-toggle">Mobile Tool</a></li>
+        <ul id="sidebar_menu" className="sidebar-nav">
+          <li className="sidebar-brand" onClick={this.toggle.bind(this)}><a id="menu-toggle">Mobile Tool <i id="menu-icon" className="fa fa-bars" aria-hidden="true"></i></a></li>
+
         </ul>
-        <ul class="sidebar-nav" id="sidebar">
+        <ul className="sidebar-nav" id="sidebar">
             <SideBarElement
               iconAwesome="fa fa-file-text"
               title="Generate Catalog"

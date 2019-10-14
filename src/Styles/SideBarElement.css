@@ -48,3 +48,9 @@
   opacity: 1;
   color: white;
 }
+
+#menu-icon{
+  float: right;
+  margin-top: 1.5rem;
+  margin-right: 1.5rem;
+}
