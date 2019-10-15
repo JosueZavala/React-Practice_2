@@ -2,7 +2,9 @@ import React from 'react';
 import SearchInput from '../components/SearchInput';
 import OptionCard from '../components/OptionCard';
 import Toggle from '../components/Toggle';
+import API from '../components/api';
 import UniqueId from 'react-html-id';
+import SweetAlert from 'sweetalert2-react';
 import '../Styles/PaymentRestrictions.css';
 
 class PaymentRestrictions extends React.Component{
@@ -19,169 +21,7 @@ class PaymentRestrictions extends React.Component{
         stepOne: false,
         stepTwo: false,
         stepThree: false,
-        apiLocaleResponse: {
-          "tokenization": true,
-          "countryConfiguration": [
-            {
-              "countryName": "España",
-              "code": "ES",
-              "defaultLocale": "es-ES",
-              "validLocales": "es-ES",
-              "languages": [
-                {
-                  "isDefault": false,
-                  "code": "es-ES",
-                  "title": null
-                }
-              ],
-              "warehouses": [
-                {
-                  "key": "S4",
-                  "title": "Velazquez"
-                }
-              ]
-            },
-            {
-              "countryName": "Malaysia",
-              "code": "MY",
-              "defaultLocale": "en-MY",
-              "validLocales": "en-MY,zh-MY,ms-MY",
-              "languages": [
-                {
-                  "isDefault": true,
-                  "code": "en-MY",
-                  "title": "English"
-                },
-                {
-                  "isDefault": false,
-                  "code": "zh-MY",
-                  "title": "Chinese"
-                },
-                {
-                  "isDefault": false,
-                  "code": "ms-MY",
-                  "title": "Malay"
-                }
-              ],
-              "warehouses": [
-                {
-                  "key": "PG",
-                  "title": "PG Penang"
-                },
-                {
-                  "key": "JB",
-                  "title": "JB Johor Bahru"
-                },
-                {
-                  "key": "K7",
-                  "title": "KL Kuala Lumpur"
-                },
-                {
-                  "key": "A1",
-                  "title": "Testing warehouse A1"
-                }
-              ]
-            }
-          ],
-          "locales": [
-            {
-              "country": "VN",
-              "code": "FR-LV",
-              "displayName": "Senegal (Chinese)",
-              "prompt": "irure"
-            },
-            {
-              "country": "MN",
-              "code": "ES-BV",
-              "displayName": "Czech Republic (Malay)",
-              "prompt": "ullamco"
-            },
-            {
-              "country": "BH",
-              "code": "FR-GL",
-              "displayName": "Equatorial Guinea (English)",
-              "prompt": "occaecat"
-            },
-            {
-              "country": "AR",
-              "code": "PT-BJ",
-              "displayName": "United States (Espanol)",
-              "prompt": "Lorem"
-            },
-            {
-              "country": "EG",
-              "code": "PT-PM",
-              "displayName": "Netherlands (Malay)",
-              "prompt": "aute"
-            },
-            {
-              "country": "YE",
-              "code": "PT-KP",
-              "displayName": "Nigeria (Chinese)",
-              "prompt": "ipsum"
-            },
-            {
-              "country": "BS",
-              "code": "PT-MV",
-              "displayName": "Burkina Faso (Malay)",
-              "prompt": "exercitation"
-            },
-            {
-              "country": "YT",
-              "code": "FR-CG",
-              "displayName": "Bhutan (Espanol)",
-              "prompt": "officia"
-            },
-            {
-              "country": "ZM",
-              "code": "PT-IQ",
-              "displayName": "Peru (Malay)",
-              "prompt": "officia"
-            },
-            {
-              "country": "VU",
-              "code": "EN-SE",
-              "displayName": "Swaziland (Malay)",
-              "prompt": "et"
-            },
-            {
-              "country": "TM",
-              "code": "PT-SY",
-              "displayName": "Chad (English)",
-              "prompt": "enim"
-            },
-            {
-              "country": "NE",
-              "code": "FR-NA",
-              "displayName": "Suriname (Malay)",
-              "prompt": "in"
-            },
-            {
-              "country": "IT",
-              "code": "EN-CC",
-              "displayName": "Norfolk Island (Espanol)",
-              "prompt": "ad"
-            },
-            {
-              "country": "NP",
-              "code": "ES-DK",
-              "displayName": "Tuvalu (Chinese)",
-              "prompt": "ad"
-            },
-            {
-              "country": "TW",
-              "code": "FR-LY",
-              "displayName": "Sao Tome and Principe (Malay)",
-              "prompt": "officia"
-            },
-            {
-              "country": "FK",
-              "code": "ES-HM",
-              "displayName": "Ghana (Espanol)",
-              "prompt": "incididunt"
-            }
-          ]
-        },
+        apiLocaleResponse: {},
         apiwarehousesResponse: {
           "NPS": true,
           "invoiceOption": "WithPackage",
@@ -229,7 +69,8 @@ class PaymentRestrictions extends React.Component{
         localeSelected: '',
         warehouseSelected: '',
         restrictionsWHSelected: {},
-        toggleShowSKU: false
+        toggleShowSKU: false,
+        apiError: false
     };
   }
 
@@ -403,8 +244,202 @@ class PaymentRestrictions extends React.Component{
     return beautyRestriction;
   }
 
-  render() {
+  _getApiLocales(){
+    API.get('Locale')
+      .then(res => {
+        const localesData = res.data;
+        this.setState({ apiLocaleResponse: localesData });
+        this._updateLocalesArray(localesData.locales);
+      })
+      .catch(error => {
+        this._showSweetAlert(error, 'error', '_getApiLocales');
+      });
 
+      /*API RESPONSE EXAMPLE*/
+      /*apiLocaleResponse: {
+        "tokenization": true,
+        "countryConfiguration": [
+          {
+            "countryName": "España",
+            "code": "ES",
+            "defaultLocale": "es-ES",
+            "validLocales": "es-ES",
+            "languages": [
+              {
+                "isDefault": false,
+                "code": "es-ES",
+                "title": null
+              }
+            ],
+            "warehouses": [
+              {
+                "key": "S4",
+                "title": "Velazquez"
+              }
+            ]
+          },
+          {
+            "countryName": "Malaysia",
+            "code": "MY",
+            "defaultLocale": "en-MY",
+            "validLocales": "en-MY,zh-MY,ms-MY",
+            "languages": [
+              {
+                "isDefault": true,
+                "code": "en-MY",
+                "title": "English"
+              },
+              {
+                "isDefault": false,
+                "code": "zh-MY",
+                "title": "Chinese"
+              },
+              {
+                "isDefault": false,
+                "code": "ms-MY",
+                "title": "Malay"
+              }
+            ],
+            "warehouses": [
+              {
+                "key": "PG",
+                "title": "PG Penang"
+              },
+              {
+                "key": "JB",
+                "title": "JB Johor Bahru"
+              },
+              {
+                "key": "K7",
+                "title": "KL Kuala Lumpur"
+              },
+              {
+                "key": "A1",
+                "title": "Testing warehouse A1"
+              }
+            ]
+          }
+        ],
+        "locales": [
+          {
+            "country": "VN",
+            "code": "FR-LV",
+            "displayName": "Senegal (Chinese)",
+            "prompt": "irure"
+          },
+          {
+            "country": "MN",
+            "code": "ES-BV",
+            "displayName": "Czech Republic (Malay)",
+            "prompt": "ullamco"
+          },
+          {
+            "country": "BH",
+            "code": "FR-GL",
+            "displayName": "Equatorial Guinea (English)",
+            "prompt": "occaecat"
+          },
+          {
+            "country": "AR",
+            "code": "PT-BJ",
+            "displayName": "United States (Espanol)",
+            "prompt": "Lorem"
+          },
+          {
+            "country": "EG",
+            "code": "PT-PM",
+            "displayName": "Netherlands (Malay)",
+            "prompt": "aute"
+          },
+          {
+            "country": "YE",
+            "code": "PT-KP",
+            "displayName": "Nigeria (Chinese)",
+            "prompt": "ipsum"
+          },
+          {
+            "country": "BS",
+            "code": "PT-MV",
+            "displayName": "Burkina Faso (Malay)",
+            "prompt": "exercitation"
+          },
+          {
+            "country": "YT",
+            "code": "FR-CG",
+            "displayName": "Bhutan (Espanol)",
+            "prompt": "officia"
+          },
+          {
+            "country": "ZM",
+            "code": "PT-IQ",
+            "displayName": "Peru (Malay)",
+            "prompt": "officia"
+          },
+          {
+            "country": "VU",
+            "code": "EN-SE",
+            "displayName": "Swaziland (Malay)",
+            "prompt": "et"
+          },
+          {
+            "country": "TM",
+            "code": "PT-SY",
+            "displayName": "Chad (English)",
+            "prompt": "enim"
+          },
+          {
+            "country": "NE",
+            "code": "FR-NA",
+            "displayName": "Suriname (Malay)",
+            "prompt": "in"
+          },
+          {
+            "country": "IT",
+            "code": "EN-CC",
+            "displayName": "Norfolk Island (Espanol)",
+            "prompt": "ad"
+          },
+          {
+            "country": "NP",
+            "code": "ES-DK",
+            "displayName": "Tuvalu (Chinese)",
+            "prompt": "ad"
+          },
+          {
+            "country": "TW",
+            "code": "FR-LY",
+            "displayName": "Sao Tome and Principe (Malay)",
+            "prompt": "officia"
+          },
+          {
+            "country": "FK",
+            "code": "ES-HM",
+            "displayName": "Ghana (Espanol)",
+            "prompt": "incididunt"
+          }
+        ]
+}*/
+  }
+
+  _updateLocalesArray(localesData){
+    let localeArrayfromAPI = localesData;
+    let codeArray = [];
+    localeArrayfromAPI.forEach((item) => {
+      codeArray.push(item.code);
+    });
+    this.setState({ localesArray: codeArray });
+  }
+
+  _showSweetAlert(message, type, apiFrom){
+    this.setState({
+      apiError: true,
+      swaltype: type,
+      swaltitle: "Error in: "+apiFrom,
+      swaltext: message
+    });
+  }
+
+  render() {
     return (
       <div className="container-fluid">
         <div className="row">
@@ -419,7 +454,13 @@ class PaymentRestrictions extends React.Component{
                   FunctionOnChange = {this.GenerateLocaleOptionCards}
                   Message = {this.state.notFoundMessage}
                 />
-
+                <SweetAlert
+                  show={this.state.apiError}
+                  type={this.state.swaltype}
+                  title={this.state.swaltitle}
+                  text={this.state.swaltext}
+                  onConfirm={() => this.setState({ apiError: false })}
+                />
                 {/*First Section*/}
                 <div className="row">
                  <div className={"first-step " + (this.state.stepOne ? '' : 'hideContainer')}>
@@ -510,14 +551,8 @@ class PaymentRestrictions extends React.Component{
   }
 
   componentDidMount(){
-    let localeArrayfromAPI = this.state.apiLocaleResponse.locales;
-    let codeArray = [];
-    localeArrayfromAPI.forEach((item) => {
-      codeArray.push(item.code);
-    });
-    this.setState({ localesArray: codeArray });
+    this._getApiLocales();
   }
-
 }
 
 export default PaymentRestrictions
