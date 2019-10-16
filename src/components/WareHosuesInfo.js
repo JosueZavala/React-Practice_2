@@ -1,7 +1,9 @@
 import React from 'react';
-import WHTable  from '../components/WHTable';
 import SearchInput from '../components/SearchInput';
+import LocalesFound from '../components/LocalesFound';
 import WHTuple from '../components/WHTuple';
+import WHTable  from '../components/WHTable';
+
 
 
 class WareHosuesInfo extends React.Component{
@@ -76,7 +78,7 @@ class WareHosuesInfo extends React.Component{
         }
       ],
       arrayTuple: [],
-      displayContainer: 'none',
+      displayContainer: false,
       notFoundMessage: ''
     };
   }
@@ -102,18 +104,18 @@ class WareHosuesInfo extends React.Component{
       this.UpdateSetState(itemsArray, searchValue, countryCodeUpperCase);
     }
 
-    UpdateSetState(itemsArray, searchValue, countryCodeUpperCase){
+  UpdateSetState(itemsArray, searchValue, countryCodeUpperCase){
         if (searchValue !== '' && itemsArray.length > 0 ) {
           let countriesWihtOutLastPoint = countryCodeUpperCase.substring(0, countryCodeUpperCase.length-2);
           this.setState({
             arrayTuple: itemsArray,
-            displayContainer: '',
+            displayContainer: true,
             notFoundMessage: 'Country Found: ' + countriesWihtOutLastPoint
           });
        }else {
          this.setState({
            arrayTuple: [],
-           displayContainer: 'none',
+           displayContainer: false,
            notFoundMessage: 'Any country or Locale found with: ' + searchValue
          });
        }
@@ -134,6 +136,10 @@ class WareHosuesInfo extends React.Component{
                 <SearchInput
                   FunctionOnChange = {this.SearchInWarehouses}
                   Message = {this.state.notFoundMessage}
+                />
+                <LocalesFound
+                  StepOne = {this.state.displayContainer}
+                  ShowSecondStep = {() => alert("Hola")}
                 />
               </div>
               <WHTable tupleArray = {this.state.arrayTuple}/>
