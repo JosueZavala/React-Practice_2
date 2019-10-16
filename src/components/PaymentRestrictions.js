@@ -13,7 +13,7 @@ class PaymentRestrictions extends React.Component{
     this.ShowSKURestrictions = this.ShowSKURestrictions.bind(this);
     this.GenerateLocaleOptionCards = this.GenerateLocaleOptionCards.bind(this);
     this.UpdateLocaleSelected = this.UpdateLocaleSelected.bind(this);
-    this.UpdateWarehousesArray = this.UpdateWarehousesArray.bind(this);
+    this.ShowSecondStep = this.ShowSecondStep.bind(this);
     this.UpdateWareHouseSelected = this.UpdateWareHouseSelected.bind(this);
     UniqueId.enableUniqueIds(this);
 
@@ -138,36 +138,9 @@ class PaymentRestrictions extends React.Component{
      }
   }
 
-  UpdateWarehousesArray(){
-    const _paymentConfigurations = this.state.apiwarehousesResponse.paymentConfiguration;
-    const _warehousesArray = [];
-    _paymentConfigurations.forEach((item, index) => {
-      _warehousesArray.push(item.wareHouse);
-    });
-    this.setState({ warehousesArray: _warehousesArray });
-
-    this.GenerateWarehousesOptionCards(_warehousesArray);
-  }
-
-  GenerateWarehousesOptionCards(warehousesArray){
-    const _itemsArray = [];
-    const _warehousesArray = warehousesArray;
-
-
-    _warehousesArray.forEach((data, index) => {
-      _itemsArray.push(
-          <OptionCard
-            FunctionOnChange = {this.UpdateWareHouseSelected}
-            color={2}
-            text={data} inputName="warehouses" key={this.nextUniqueId()}/>
-        );
-    });
-    this.setState({
-      warehousesOptionCards: _itemsArray,
-      stepTwo: true,
-      stepThree: false,
-      toggleShowSKU: false
-    });
+  ShowSecondStep(){
+    const _locale = this.state.localeSelected;
+    this._getWarehousesAndRestrictions(_locale);
   }
 
   UpdateWareHouseSelected(warehouse){
@@ -244,7 +217,7 @@ class PaymentRestrictions extends React.Component{
     return beautyRestriction;
   }
 
-  _getApiLocales(){
+  _getLocales(){
     API.get('Locale')
       .then(res => {
         const localesData = res.data;
@@ -252,7 +225,7 @@ class PaymentRestrictions extends React.Component{
         this._updateLocalesArray(localesData.locales);
       })
       .catch(error => {
-        this._showSweetAlert(error, 'error', '_getApiLocales');
+        this._showSweetAlert(error, 'error', 'Error in: _getLocales');
       });
 
       /*API RESPONSE EXAMPLE*/
@@ -421,6 +394,59 @@ class PaymentRestrictions extends React.Component{
 }*/
   }
 
+  _getWarehousesAndRestrictions(locale){
+
+    API.get('Payment/GetRestrictions/'+locale)
+      .then(res => {
+        const restrictionsData = res.data;
+        this._updateWarehousesArray(restrictionsData);
+      })
+      .catch(error => {
+        this._showSweetAlert(error, 'error', 'Error in: _getWarehousesAndRestrictions');
+      });
+
+      /*API RESPONSE EXAMPLE*/
+      /*{
+        "NPS": true,
+        "invoiceOption": "WithPackage",
+        "BambooPrinter": false,
+        "dropshipmentorder": true,
+        "orderSubTypeMap": null,
+        "paymentConfiguration": [
+          {
+            "wareHouse": "*",
+            "hasCreditCardInput": true,
+            "hasManualCreditCardInput": false,
+            "hasCashInput": false,
+            "HasPGHCreditCardInput": false,
+            "hasUpiInput": false,
+            "hasNetBankingInput": false,
+            "hasBayadCenterInput": false
+          },
+          {
+            "wareHouse": "E1",
+            "hasCreditCardInput": true,
+            "hasManualCreditCardInput": true,
+            "hasCashInput": true,
+            "HasPGHCreditCardInput": false,
+            "hasUpiInput": false,
+            "hasNetBankingInput": false,
+            "hasBayadCenterInput": false
+          },
+          {
+            "wareHouse": "EXt2",
+            "hasCreditCardInput": true,
+            "hasManualCreditCardInput": true,
+            "hasCashInput": false,
+            "HasPGHCreditCardInput": true,
+            "hasUpiInput": false,
+            "hasNetBankingInput": false,
+            "hasBayadCenterInput": false
+          }
+        ]
+}*/
+  }
+
   _updateLocalesArray(localesData){
     let localeArrayfromAPI = localesData;
     let codeArray = [];
@@ -430,11 +456,54 @@ class PaymentRestrictions extends React.Component{
     this.setState({ localesArray: codeArray });
   }
 
-  _showSweetAlert(message, type, apiFrom){
+  _updateWarehousesArray(apiwarehousesResponse){
+    const _apiwarehousesResponse = apiwarehousesResponse;
+    const _paymentConfigurations = _apiwarehousesResponse.paymentConfiguration;
+    const _warehousesArray = [];
+
+    if(_paymentConfigurations){
+      _paymentConfigurations.forEach((item, index) => {
+        _warehousesArray.push(item.wareHouse);
+      });
+      this.setState({
+        warehousesArray: _warehousesArray,
+        apiwarehousesResponse: _apiwarehousesResponse
+       });
+
+      this._generateWarehousesOptionCards(_warehousesArray);
+    }else{
+      let _title='Not found Warehouses for:';
+      this._showSweetAlert(this.state.localeSelected, 'info', _title);
+    }
+
+  }
+
+  _generateWarehousesOptionCards(warehousesArray){
+    const _itemsArray = [];
+    const _warehousesArray = warehousesArray;
+
+
+    _warehousesArray.forEach((data, index) => {
+      _itemsArray.push(
+          <OptionCard
+            FunctionOnChange = {this.UpdateWareHouseSelected}
+            color={2}
+            text={data} inputName="warehouses" key={this.nextUniqueId()}/>
+        );
+    });
+    this.setState({
+      warehousesOptionCards: _itemsArray,
+      stepTwo: true,
+      stepThree: false,
+      toggleShowSKU: false
+    });
+  }
+
+  _showSweetAlert(message, type, title){
     this.setState({
       apiError: true,
       swaltype: type,
-      swaltitle: "Error in: "+apiFrom,
+      swaltitle: title,
       swaltext: message
     });
   }
@@ -479,7 +548,7 @@ class PaymentRestrictions extends React.Component{
                       </div>
                     </div>
                     <div className="actions-container">
-                      <button className="action-button" onClick = {this.UpdateWarehousesArray}>Next</button>
+                      <button className="action-button" onClick = {this.ShowSecondStep}>Next</button>
                     </div>
                  </div>
                 </div>
@@ -551,7 +620,7 @@ class PaymentRestrictions extends React.Component{
   }
 
   componentDidMount(){
-    this._getApiLocales();
+    this._getLocales();
   }
 }
 
