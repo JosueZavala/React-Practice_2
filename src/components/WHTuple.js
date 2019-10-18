@@ -1,6 +1,7 @@
 import React from 'react';
 import MyModal  from '../components/MyModal';
 import Toggle from '../components/Toggle';
+import API from '../components/api';
 import SweetAlert from 'sweetalert2-react';
 
 class WHTuple extends React.Component{
@@ -8,7 +9,8 @@ class WHTuple extends React.Component{
     super(props);
 
     this.onToggle = this.onToggle.bind(this);
-    this.showAlert = this.showAlert.bind(this);
+    this.onModalSave = this.onModalSave.bind(this);
+    this._closeSweetAlert = this._closeSweetAlert.bind(this);
 
     this.state = {
       show : false,
@@ -25,37 +27,64 @@ class WHTuple extends React.Component{
 
   }
   onToggle () {
-    let newObject = this.state.dataObject;
-    newObject.isIkiosk = !this.state.isIkiosk;
+    const _newObject = {...this.state.dataObject};
 
-     this.setState({
-       toggleActive: !this.state.toggleActive,
-       isIkiosk: !this.state.isIkiosk,
-       dataObject: newObject
-     });
+    _newObject.isIkiosk = !this.state.isIkiosk;
+    this.setState({
+      toggleActive: !this.state.toggleActive,
+      isIkiosk: !this.state.isIkiosk,
+      dataObject: _newObject
+    });
 
-     this.showAlert();
+    if(_newObject.isIkiosk){
+      this._savePickupLocations(_newObject);
+    }else{
+      this._deletePickupLocations(_newObject);
+    }
   }
 
-  showAlert(){
-      let isChecked = this.state.isIkiosk;
-      let sweetAlertTitle = this.state.dataObject.Name;
-      const updateIsIkiosk = new Promise((resolve, reject) => {
-          setTimeout(() => !isChecked ? resolve(isChecked) : reject(isChecked)
-            , 300);
-      });
+  onModalSave(dataObject){
+    let _newObject = {...dataObject};
+    this.setState({
+      toggleActive: _newObject.isIkiosk,
+      isIkiosk: _newObject.isIkiosk,
+      dataObject: _newObject
+    });
 
-      updateIsIkiosk
-        .then((value) => {
-          this.SetSweetAlert("success", sweetAlertTitle, "Ikiosk changed to True")
-        })
-        .catch((error) => {
-          console.error(error);
-          this.SetSweetAlert("error",sweetAlertTitle,"Ikiosk changed to False")
-        });
+    if(_newObject.isIkiosk){
+      this._savePickupLocations(_newObject);
+    }else{
+      this._deletePickupLocations(_newObject);
     }
+  }
 
-    SetSweetAlert(type, title, text) {
+  _savePickupLocations(pickupObject){
+    const _objectToAPI = {...pickupObject};
+    const _locale = pickupObject.locale;
+    delete _objectToAPI.locale;
+
+    API.put('PickupLocation/SavePickupLocation/'+_locale, _objectToAPI)
+      .then(res =>{
+        this.SetSweetAlert("success", _objectToAPI.title, "Ikiosk changed to "+_objectToAPI.isIkiosk);
+      })
+      .catch(error => {
+        this.SetSweetAlert("error", 'Error trying to save Pickup Location', error);
+      });
+  }
+
+  _deletePickupLocations(pickupObject){
+    const _locale = pickupObject.locale;
+    const _warehouseCode = pickupObject.warehouseCode;
+
+    API.delete('PickupLocation/DeletePickupLocation/'+_locale+'?warehouseCode='+_warehouseCode)
+      .then(res =>{
+        this.SetSweetAlert("success", pickupObject.title, "Ikiosk changed to "+pickupObject.isIkiosk);
+      }).catch(error => {
+        this.SetSweetAlert("error", 'Error trying to Delete Pickup Location', error);
+      });
+  }
+
+  SetSweetAlert(type, title, text) {
         this.setState({
           showSA: true,
           swaltype: type,
@@ -64,17 +93,17 @@ class WHTuple extends React.Component{
         });
     }
 
-
-
-
+  _closeSweetAlert(){
+    this.setState({ showSA: false })
+  }
 
   render() {
 
     return (
         <tr>
-          <td>{this.state.dataObject.Code}</td>
-          <td>{this.state.dataObject.CountryCode}</td>
-          <td>{this.state.dataObject.Name}</td>
+          <td>{this.state.dataObject.warehouseCode}</td>
+          <td>{this.state.dataObject.countryCode}</td>
+          <td>{this.state.dataObject.title}</td>
           <td>{this.state.isIkiosk.toString()}</td>
           <td>
             <Toggle
@@ -90,6 +119,7 @@ class WHTuple extends React.Component{
             <MyModal
               show = {this.state.show}
               handleClose = {this.state.handleClose}
+              handleSave = {this.onModalSave}
               data = {this.state.dataObject}
             />
             <SweetAlert
@@ -97,7 +127,7 @@ class WHTuple extends React.Component{
               type={this.state.swaltype}
               title={this.state.swaltitle}
               text={this.state.swaltext}
-              onConfirm={() => this.setState({ showSA: false })}
+              onConfirm={this._closeSweetAlert.bind(this)}
             />
         </tr>
     );
