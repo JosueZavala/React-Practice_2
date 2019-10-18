@@ -3,122 +3,141 @@ import SearchInput from '../components/SearchInput';
 import LocalesFound from '../components/LocalesFound';
 import WHTuple from '../components/WHTuple';
 import WHTable  from '../components/WHTable';
+import OptionCard from '../components/OptionCard';
+import API from '../components/api';
+import UniqueId from 'react-html-id';
+import SweetAlert from 'sweetalert2-react';
 
 
 
 class WareHosuesInfo extends React.Component{
   constructor(){
     super();
-    this.SearchInWarehouses = this.SearchInWarehouses.bind(this);
+    this.UpdateLocaleSelected = this.UpdateLocaleSelected.bind(this);
+    this.GenerateLocaleOptionCards = this.GenerateLocaleOptionCards.bind(this);
+    UniqueId.enableUniqueIds(this);
+
     this.state = {
-      Warehouses: [
-        {
-          "Code": "deserunt",
-          "Name": "fugiat",
-          "ShortName": "ea",
-          "Latitude": -68.737033,
-          "Longitude": 24.687642,
-          "Address1": "203 Middleton Street, Grazierville, Marshall Islands, 3917",
-          "Address2": "999 Tompkins Avenue, Robbins, Massachusetts, 5907",
-          "City": "Kerby",
-          "CountryDistrict": "Lorem",
-          "StateProvinceTerritory": "do",
-          "PostalCode": 2385,
-          "isIkiosk": true,
-          "CountryCode": "FR-PM",
-          "phone": "+1 (880) 421-3098"
-        },
-        {
-          "Code": "non",
-          "Name": "nostrud officia",
-          "ShortName": "amet",
-          "Latitude": 74.84119,
-          "Longitude": 113.161719,
-          "Address1": "539 Horace Court, Gallina, Minnesota, 4349",
-          "Address2": "275 Stuyvesant Avenue, Ona, Maine, 3510",
-          "City": "Fairacres",
-          "CountryDistrict": "enim",
-          "StateProvinceTerritory": "occaecat",
-          "PostalCode": 9521,
-          "isIkiosk": true,
-          "CountryCode": "EN-RW",
-          "phone": "+1 (853) 453-3589"
-        },
-        {
-          "Code": "eu",
-          "Name": "nisi",
-          "ShortName": "excepteur",
-          "Latitude": -66.795954,
-          "Longitude": -52.078671,
-          "Address1": "335 Halleck Street, Mulino, Palau, 4367",
-          "Address2": "340 Pleasant Place, Chamberino, Idaho, 2678",
-          "City": "Whitmer",
-          "CountryDistrict": "sit",
-          "StateProvinceTerritory": "sit",
-          "PostalCode": 1187,
-          "isIkiosk": false,
-          "CountryCode": "EN-BH",
-          "phone": "+1 (971) 435-2430"
-        },
-        {
-          "Code": "dolor",
-          "Name": "minim deserunt",
-          "ShortName": "ipsum",
-          "Latitude": -73.543712,
-          "Longitude": 72.201684,
-          "Address1": "812 Summit Street, Selma, Delaware, 2583",
-          "Address2": "468 Box Street, Tolu, Georgia, 3310",
-          "City": "Bladensburg",
-          "CountryDistrict": "irure",
-          "StateProvinceTerritory": "ad",
-          "PostalCode": 1473,
-          "isIkiosk": false,
-          "CountryCode": "EN-IN",
-          "phone": "+1 (871) 440-3083"
-        }
-      ],
+      Warehouses: [],
       arrayTuple: [],
+      localesArray: [],
+      localeSelected: '',
+      localesOptionCards: [],
       displayContainer: false,
-      notFoundMessage: ''
+      notFoundMessage: '',
+      apiError: false,
+      swaltype: '',
+      swaltitle: '',
+      swaltext: ''
     };
   }
 
-  SearchInWarehouses(searchValue){
-    const itemsArray = [];
-    const warehousesJson = this.state.Warehouses;
-    const searchValueUpperCase = searchValue.toUpperCase();
-    let countryCodeUpperCase = '';
-    let countryFound = '';
-
-    warehousesJson.forEach((data, index) => {
-      countryCodeUpperCase = data.CountryCode.toUpperCase();
-
-      if ( countryCodeUpperCase.includes(searchValueUpperCase) ){
-          itemsArray.push(
-              <WHTuple dataObject = {data} key = {"tuple"+index}/>
-            );
-          countryFound += countryCodeUpperCase + ', ';
-          }
-        });
-      countryCodeUpperCase = countryFound ? countryFound : countryCodeUpperCase;
-      this.UpdateSetState(itemsArray, searchValue, countryCodeUpperCase);
-    }
-
+  /*SearchInput*/
   UpdateSetState(itemsArray, searchValue, countryCodeUpperCase){
         if (searchValue !== '' && itemsArray.length > 0 ) {
           let countriesWihtOutLastPoint = countryCodeUpperCase.substring(0, countryCodeUpperCase.length-2);
           this.setState({
-            arrayTuple: itemsArray,
+            localesOptionCards: itemsArray,
             displayContainer: true,
             notFoundMessage: 'Country Found: ' + countriesWihtOutLastPoint
           });
        }else {
          this.setState({
-           arrayTuple: [],
+           localesOptionCards: [],
            displayContainer: false,
            notFoundMessage: 'Any country or Locale found with: ' + searchValue
          });
        }
+    }
+
+  /*LocalesFound*/
+  GenerateLocaleOptionCards(searchValue){
+      const itemsArray = [];
+      const _localesArray = this.state.localesArray;
+      const searchValueUpperCase = searchValue.toUpperCase();
+      let countryCodeUpperCase = '';
+      let countryFound = '';
+
+
+      _localesArray.forEach((data, index) => {
+        countryCodeUpperCase = data.toUpperCase();
+
+        if ( countryCodeUpperCase.includes(searchValueUpperCase) ){
+            itemsArray.push(
+                <OptionCard
+                  FunctionOnChange = {this.UpdateLocaleSelected}
+                  color={1}
+                  text={data} inputName="locales" key={this.nextUniqueId()}/>
+              );
+              countryFound += countryCodeUpperCase + ', ';
+            }
+          });
+          countryCodeUpperCase = countryFound ? countryFound : countryCodeUpperCase;
+          this.UpdateSetState(itemsArray, searchValue, countryCodeUpperCase);
+      }
+
+  UpdateLocaleSelected(locale) {
+        this.setState({
+          localeSelected: locale,
+          arrayTuple: []
+        });
+        this._getWareHouses(locale);
+      }
+
+  _getLocales(){
+      API.get('Locale')
+        .then(res => {
+          const localesData = res.data;
+          this.setState({ apiLocaleResponse: localesData });
+          this._updateLocalesArray(localesData.locales);
+        })
+        .catch(error => {
+          this._showSweetAlert(error, 'error', 'Error in: _getLocales');
+        });
+    }
+
+  _getWareHouses(locale){
+    let allWareHouses='?showAllWarehouses=true';
+    API.get('PickupLocation/GetPickupLocations/'+locale+allWareHouses)
+      .then(res => {
+        const warehousesData = res.data;
+        this.setState({ Warehouses: warehousesData });
+        this._updatAarrayTuple(warehousesData, locale);
+      })
+      .catch(error => {
+        this._showSweetAlert(error, 'error', 'Error trying to get WH data');
+      });
+  }
+
+  _updateLocalesArray(localesData){
+      let localeArrayfromAPI = localesData;
+      let codeArray = [];
+      localeArrayfromAPI.forEach((item) => {
+        codeArray.push(item.code);
+      });
+      this.setState({ localesArray: codeArray });
+    }
+
+  _updatAarrayTuple(wareHousesData){
+    const itemsArray = [];
+    const warehousesJson = wareHousesData;
+
+    warehousesJson.forEach((data, index) => {
+      const dataWithLocale = {...data, locale: this.state.localeSelected};
+      itemsArray.push(
+          <WHTuple dataObject = {dataWithLocale} key = {"tuple"+index}/>
+        );
+      });
+      this.setState({ arrayTuple: itemsArray });
+    }
+
+  _showSweetAlert(message, type, title){
+      this.setState({
+        apiError: true,
+        swaltype: type,
+        swaltitle: title,
+        swaltext: message
+      });
     }
 
   render() {
@@ -134,12 +153,20 @@ class WareHosuesInfo extends React.Component{
             <div className="container">
               <div className="col-sm dropDown-container">
                 <SearchInput
-                  FunctionOnChange = {this.SearchInWarehouses}
+                  FunctionOnChange = {this.GenerateLocaleOptionCards}
                   Message = {this.state.notFoundMessage}
+                />
+                <SweetAlert
+                  show={this.state.apiError}
+                  type={this.state.swaltype}
+                  title={this.state.swaltitle}
+                  text={this.state.swaltext}
+                  onConfirm={() => this.setState({ apiError: false })}
                 />
                 <LocalesFound
                   StepOne = {this.state.displayContainer}
-                  ShowSecondStep = {() => alert("Hola")}
+                  LocalesOptionCards = {this.state.localesOptionCards}
+                  ShowSecondStep = {() => {}}
                 />
               </div>
               <WHTable tupleArray = {this.state.arrayTuple}/>
@@ -147,6 +174,10 @@ class WareHosuesInfo extends React.Component{
         </div>
       </div>
     );
+  }
+
+  componentDidMount(){
+    this._getLocales();
   }
 }
 
