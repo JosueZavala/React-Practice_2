@@ -167,7 +167,7 @@ class PaymentRestrictions extends React.Component{
     let _restrictionsObj = restrictionsObj;
     let _whRestrictionsToggles = [];
     let styleRight = { float: 'right'};
-    let heightStyle = { height: '45px' };
+    let heightStyle = { height: '35px' };
 
     for( const restriction in _restrictionsObj ){
       let _restriction = this._beautyRestriction(restriction);
