@@ -1,6 +1,7 @@
 import React from 'react';
 import SearchInput from '../components/SearchInput';
 import OptionCard from '../components/OptionCard';
+import RestrictionsToggles from '../components/RestrictionsToggles';
 import Toggle from '../components/Toggle';
 import API from '../components/api';
 import UniqueId from 'react-html-id';
@@ -15,6 +16,8 @@ class PaymentRestrictions extends React.Component{
     this.UpdateLocaleSelected = this.UpdateLocaleSelected.bind(this);
     this.ShowSecondStep = this.ShowSecondStep.bind(this);
     this.UpdateWareHouseSelected = this.UpdateWareHouseSelected.bind(this);
+    this.ChangeRestrictionToogle = this.ChangeRestrictionToogle.bind(this);
+
     UniqueId.enableUniqueIds(this);
 
     this.state = {
@@ -69,6 +72,7 @@ class PaymentRestrictions extends React.Component{
         localeSelected: '',
         warehouseSelected: '',
         restrictionsWHSelected: {},
+        restrictionsWHToUpdate: {},
         toggleShowSKU: false,
         apiError: false
     };
@@ -85,9 +89,11 @@ class PaymentRestrictions extends React.Component{
     this.setState({
       localeSelected: locale,
       toggleShowSKU: false,
-      stepTwo: false,
+      stepTwo: true,
       stepThree: false
     });
+
+    this._getWarehousesAndRestrictions(locale);
   }
 
   GenerateLocaleOptionCards(searchValue){
@@ -159,8 +165,11 @@ class PaymentRestrictions extends React.Component{
       }
     });
     delete _restrictionsObj.wareHouse;
-    this.setState({ restrictionsWHSelected: _restrictionsObj});
-    this.GenerateWHRestrictionsToggles(_restrictionsObj);
+    this.setState({
+      restrictionsWHSelected: _restrictionsObj,
+      restrictionsWHToUpdate: _restrictionsObj
+    });
+    //this.GenerateWHRestrictionsToggles(_restrictionsObj);
   }
 
   GenerateWHRestrictionsToggles(restrictionsObj){
@@ -176,7 +185,8 @@ class PaymentRestrictions extends React.Component{
         <label className="styleLeft">{_restriction}:</label>
         <Toggle
            isChecked = {_restrictionsObj[restriction]}
-           toggleChanged = {() => {}}
+           toggleChanged = {this.ChangeRestrictionToogle}
+           restriction={restriction}
            styles={styleRight}
            key={this.nextUniqueId()}
         />
@@ -185,6 +195,24 @@ class PaymentRestrictions extends React.Component{
     }
     this.setState({ whRestrictionsToggles: _whRestrictionsToggles });
 
+  }
+
+  ChangeRestrictionToogle(restriction){
+    let _restrictionsWHToUpdate = {...this.state.restrictionsWHToUpdate};
+    _restrictionsWHToUpdate[restriction] = !_restrictionsWHToUpdate[restriction];
+
+    this.setState({restrictionsWHToUpdate: _restrictionsWHToUpdate});
+  }
+
+  SaveWareHousesRestrictions(){
+    console.log(this.state.restrictionsWHToUpdate);
+  }
+
+  ResetWareHousesRestrictions(){
+    const _restrictions = {...this.state.restrictionsWHSelected};
+    this.setState({ restrictionsWHToUpdate: _restrictions });
+    debugger;
+    this.GenerateWHRestrictionsToggles(_restrictions);
   }
 
   _beautyRestriction(uglyRestriction){
@@ -218,7 +246,7 @@ class PaymentRestrictions extends React.Component{
   }
 
   _getLocales(){
-    API.get('Locale')
+    /*API.get('Locale')
       .then(res => {
         const localesData = res.data;
         this.setState({ apiLocaleResponse: localesData });
@@ -226,10 +254,10 @@ class PaymentRestrictions extends React.Component{
       })
       .catch(error => {
         this._showSweetAlert(error, 'error', 'Error in: _getLocales');
-      });
+      });*/
 
       /*API RESPONSE EXAMPLE*/
-      /*apiLocaleResponse: {
+      let apiLocaleResponse = {
         "tokenization": true,
         "countryConfiguration": [
           {
@@ -391,22 +419,25 @@ class PaymentRestrictions extends React.Component{
             "prompt": "incididunt"
           }
         ]
-}*/
+};
+      this.setState({ apiLocaleResponse: apiLocaleResponse });
+      this._updateLocalesArray(apiLocaleResponse.locales);
+
   }
 
   _getWarehousesAndRestrictions(locale){
 
-    API.get('Payment/GetRestrictions/'+locale)
+    /*API.get('Payment/GetRestrictions/'+locale)
       .then(res => {
         const restrictionsData = res.data;
         this._updateWarehousesArray(restrictionsData);
       })
       .catch(error => {
         this._showSweetAlert(error, 'error', 'Error in: _getWarehousesAndRestrictions');
-      });
+      });*/
 
       /*API RESPONSE EXAMPLE*/
-      /*{
+      const restrictionsData = {
         "NPS": true,
         "invoiceOption": "WithPackage",
         "BambooPrinter": false,
@@ -444,7 +475,8 @@ class PaymentRestrictions extends React.Component{
             "hasBayadCenterInput": false
           }
         ]
-}*/
+};
+      this._updateWarehousesArray(restrictionsData);
   }
 
   _updateLocalesArray(localesData){
@@ -508,6 +540,7 @@ class PaymentRestrictions extends React.Component{
     });
   }
 
+
   render() {
     return (
       <div className="container-fluid">
@@ -566,15 +599,17 @@ class PaymentRestrictions extends React.Component{
                         <div className="col-xl-5 col-lg-5 col-md-5 col-sm-5 options-container general-restrictions">
                           {this.state.warehousesOptionCards}
                         </div>
-                        <div className="col-xl-5 col-lg-4 col-md-4 col-sm-4 options-container general-restrictions">
-                          {this.state.whRestrictionsToggles}
-                        </div>
+                        <RestrictionsToggles
+                          DataRestrictions={this.state.restrictionsWHToUpdate}
+                          ChangeRestrictionToogle = {this.ChangeRestrictionToogle}
+                          WareHouseSelected = {this.state.warehouseSelected}
+                        />
 
                       </div>
                     </div>
                     <div className="actions-restrictions-container">
-                      <button className="action-button">Save</button>
-                      <button className="action-button">Reset</button>
+                      <button className="action-button" onClick={this.SaveWareHousesRestrictions.bind(this)}>Save</button>
+                      <button className="action-button" onClick={this.ResetWareHousesRestrictions.bind(this)}>Reset</button>
                     </div>
                     <div className="toggle-container">
                      Show SKU Restrictions.

@@ -12,12 +12,22 @@ class Toggle extends React.Component {
     		}
     }
 
+    static getDerivedStateFromProps(props, state) {
+      if (props.isChecked !== state.isChecked) {
+        debugger;
+        return {
+          isChecked: props.isChecked,
+        };
+      }
+      return null;
+    }
+
     render () {
 
         return(
           <div>
             <label className="switch" style={this.props.styles}>
-              <input type="checkbox" checked={ this.props.isChecked } onChange={ this._handleChange }></input>
+              <input type="checkbox" checked={ this.state.isChecked } onChange={ this._handleChange }></input>
               <span className="slider round"></span>
             </label>
           </div>
@@ -26,7 +36,13 @@ class Toggle extends React.Component {
 
     _handleChange () {
       this.setState({ isChecked: !this.state.isChecked});
-      this.props.toggleChanged();
+      let _restriction = this.props.restriction;
+      if(_restriction){
+        this.props.toggleChanged(_restriction);
+      }
+      else{
+        this.props.toggleChanged();
+      }
     }
 
 }
